@@ -2,7 +2,7 @@
 
 | file                                                               | desc                                                         |
 | ------------------------------------------------------------------ | ------------------------------------------------------------ |
-| [scr]                                                              | imageboard scrappers                                         |
+| [scr](https://github.com/ntrrpt/misc/tree/main/py/scr)             | imageboard scrappers                                         |
 | cookies.py                                                         | http server that converts firefox cookies to netscape format |
 | ff2size.py                                                         | compressing video to a specified size via ffmpeg             |
 | knock.py                                                           | port knocker for windows                                     |
