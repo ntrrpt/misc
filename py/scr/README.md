@@ -8,4 +8,3 @@
 | heyuri.py   | html | [heyuri.net](http://heyuri.net/) (replaced by [he.py](https://github.com/ntrrpt/iv/blob/main/he.py))      |
 | iiyakuji.py | html | [ii.yakuji.moe](http://ii.yakuji.moe) (replaced by [yk.py](https://github.com/ntrrpt/iv/blob/main/yk.py)) |
 | nendroid.py | html | [nendoroid.web.fc2.com](http://nendoroid.web.fc2.com/main.html)                                           |
-|             |      |                                                                                                           |
