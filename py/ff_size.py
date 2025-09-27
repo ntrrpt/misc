@@ -15,35 +15,6 @@ import sys
 import shlex
 import os
 
-parser = argparse.ArgumentParser(
-    description="compressing video to a specified size via ffmpeg (NVENC)."
-)
-
-parser.add_argument(
-    "-s",
-    "--size",
-    dest="target_video_size_MB",
-    type=int,
-    default=4000,
-    help="target video size in MB (default: 4000).",
-)
-
-parser.add_argument(
-    "-e",
-    "--ext",
-    dest="files_ext",
-    default="",
-    help="file extensions for conversion (e.g., mp4). If specified, all files with this extension in the current directory will be converted.",
-)
-
-parser.add_argument(
-    "files",
-    nargs="*",
-    help="file names for conversion (if --ext is not specified).",
-)
-
-args = parser.parse_args()
-
 
 def probe(file_path):
     probe_data = ffmpeg.probe(file_path)
@@ -83,15 +54,28 @@ def conv(filename):
     print()
 
 
-print(f"target_video_size_MB => {args.target_video_size_MB}")
+if __name__ == "__main__":
+    # fmt: off
+    ap = argparse.ArgumentParser(description="compressing video to a specified size via ffmpeg (NVENC)")
+    add = ap.add_argument
 
-files_to_convert = args.files
-if args.files_ext:
-    files_to_convert = [f for f in os.listdir(".") if f.endswith(args.files_ext)]
+    add("-s", "--size", dest="target_video_size_MB", type=int, default=4000, help="target video size in MB (default: 4000).")
+    add("-e", "--ext",  dest="files_ext",            default="",             help="file extensions for conversion (e.g., mp4). If specified, all files with this extension in the current directory will be converted.")
 
-if not files_to_convert:
-    print("no files to process. Specify files or the --ext parameter.")
-    sys.exit(1)
+    add("files", nargs="*", help="file names for conversion (if --ext is not specified).")
 
-for file in files_to_convert:
-    conv(file)
+    args = ap.parse_args()
+    # fmt: on
+
+    print(f"target_video_size_MB => {args.target_video_size_MB}")
+
+    files_to_convert = args.files
+    if args.files_ext:
+        files_to_convert = [f for f in os.listdir(".") if f.endswith(args.files_ext)]
+
+    if not files_to_convert:
+        print("no files to process. Specify files or the --ext parameter.")
+        sys.exit(1)
+
+    for file in files_to_convert:
+        conv(file)
