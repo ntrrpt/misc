@@ -1,5 +1,5 @@
 ```bash
-pkg in ffmpeg uv tmux frpc avahi zsh byobu wget git
+pkg in ffmpeg uv tmux frp avahi zsh byobu wget git
 
 # ohmyzsh + plugins
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -19,5 +19,6 @@ uv tool install git+https://github.com/mikf/gallery-dl --with 'yt-dlp,pysocks'
 for pkg in streamlink scdl internetarchive; do
     uv tool install "$pkg"
 done
+
 
 ```
