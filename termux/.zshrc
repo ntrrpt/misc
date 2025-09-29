@@ -6,7 +6,7 @@ ZSH_THEME="junkfood" #( 09/24/25@ 8:37PM )( u0_a246@localhost ):~
 
 alias myip='curl http://ipecho.net/plain; echo'
 alias a='tmux attach -t main || tmux new -s main'
-alias cop="copyparty -c ~/cpp/copyp.conf"
+alias cop="copyparty -c ~/cpp/cpp.conf"
 alias fp="frpc -c ~/frpc.toml"
 alias av='sudo avahi-daemon'
 
