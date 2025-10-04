@@ -1,0 +1,25 @@
+services:
+  qemu:
+    image: qemux/qemu
+    container_name: qemu
+    environment:
+      BOOT: "arch"
+      DISK_SIZE: "16G"
+      RAM_SIZE: "5G"
+      CPU_CORES: "4"
+      DEBUG: "Y"
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8006:8006
+      - 9999:3923
+      - 5900:5900
+      - 3389:3389/tcp
+      - 3389:3389/udp
+    volumes:
+      - ./qemu:/storage
+    restart: no
+    stop_grace_period: 2m
