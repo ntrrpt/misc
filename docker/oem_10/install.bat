@@ -22,11 +22,10 @@ powershell -c "C:\ProgramData\chocolatey\choco.exe install thorium --params '"/S
 echo uv + copyparty autorun
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 C:\Users\Docker\.local\bin\uv.exe tool update-shell
-C:\Users\Docker\.local\bin\uv.exe tool install copyparty --with "pyftpdlib,pillow,pyvips,mutagen"
+C:\Users\Docker\.local\bin\uv.exe tool install "copyparty[all]" --with "fusepy,pyvips[binary]"
 C:\OEM\nssm.exe install cpp "C:\Users\Docker\.local\bin\copyparty.exe" -p3923 -v /c/:/:A
 C:\OEM\nssm.exe set cpp ObjectName .\Docker admin
 C:\OEM\nssm.exe start cpp
 
 pause
 exit
-

@@ -10,7 +10,7 @@ git clone https://github.com/zsh-users/zsh-autosuggestions \
    ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 
 # uv
-uv tool install 'copyparty[all]' --with "fusepy,pyvips[binary]"
+uv tool install "copyparty[all]" --with "fusepy,pyvips[binary]"
 
 uv tool install https://github.com/yt-dlp/yt-dlp.git -w 'pycryptodomex,pysocks,mutagen,requests,websockets,brotli,certifi,bgutil-ytdlp-pot-provider'
 
