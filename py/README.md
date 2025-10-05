@@ -11,7 +11,7 @@
 | twd.py                                                             | twitter search scrapper (rip my 9yo account)                                                 |
 | [sync.py](https://github.com/ntrrpt/misc/blob/main/termux/sync.py) | rsync wrapper with folder exclusion support                                                  |
 | flcl.py                                                            | recursive fclones                                                                            |
-| uvass.py                                                           | associate files with 'uv run --script' on windows                                            |
+| uvass.py                                                           | associate files with uv run --script (.uv) on windows                                        |
 
 ```bash
 # almost all of this is run via uv
