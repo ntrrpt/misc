@@ -1,21 +1,10 @@
-# /// script
-# name = "uvass"
-# description = "associate files with uv run --script (.uv) and uw wrapper (.uw)"
-# dependencies = [
-#     "pyinstaller",
-# ]
-# ///
-
-import argparse
-import winreg
-import random
-import string
-import ctypes
-import sys
 from pathlib import Path
 import logging as log
+import argparse
+import winreg
+import ctypes
+import sys
 import subprocess
-import shutil
 
 # Logging setup
 log.basicConfig(level=log.INFO, format="    [%(levelname)s] %(message)s")
@@ -40,10 +29,14 @@ def get_env_from_registry(name, user=True):
 
 def pathext_add(ext: str):
     # add .EXT to PATHEXT if not already present
-    current_pathext = get_env_from_registry("PATHEXT").upper().split(";")
-    if not current_pathext:
+    PATHEXT = get_env_from_registry("PATHEXT", user=True)
+    if not PATHEXT and ctypes.windll.shell32.IsUserAnAdmin():
+        PATHEXT = get_env_from_registry("PATHEXT", user=False)
+    if not PATHEXT:
         log.error("PATHEXT is empty")
         return
+
+    current_pathext = PATHEXT.upper().split(";")
 
     if f".{ext.upper()}" not in current_pathext:
         new_pathext = ";".join(current_pathext + [f".{ext.upper()}"])
@@ -57,11 +50,14 @@ def pathext_add(ext: str):
 
 def pathext_del(ext: str):
     # remove .EXT from PATHEXT
-    current_pathext = get_env_from_registry("PATHEXT").split(";")
-    if not current_pathext:
+    PATHEXT = get_env_from_registry("PATHEXT", user=True)
+    if not PATHEXT and ctypes.windll.shell32.IsUserAnAdmin():
+        PATHEXT = get_env_from_registry("PATHEXT", user=False)
+    if not PATHEXT:
         log.error("PATHEXT is empty")
         return
 
+    current_pathext = PATHEXT.split(";")
     new_pathext = [e for e in current_pathext if e.upper() != f".{ext.upper()}"]
 
     if len(new_pathext) != len(current_pathext):
@@ -78,69 +74,6 @@ def refresh_icons():
     SHCNE_ASSOCCHANGED = 0x8000000
     SHCNF_IDLIST = 0
     ctypes.windll.shell32.SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, None, None)
-
-
-def ensure_local_bin():
-    local_bin = Path.home() / ".local" / "bin"
-    if not local_bin.exists():
-        local_bin.mkdir(parents=True)
-        log.info(f"Created directory: {local_bin}")
-
-    # Check if it's in PATH
-    path_dirs = get_env_from_registry("PATH").split(";")
-    if not path_dirs:
-        log.error("PATH is empty")
-        sys.exit(1)
-
-    if str(local_bin) not in path_dirs:
-        subprocess.run(
-            f'setx PATH "{get_env_from_registry("PATH")};{local_bin}"', shell=True
-        )
-        log.info(f"Added {local_bin} to PATH (restart terminal required).")
-
-    return local_bin
-
-
-def build_wrapper(wrapper_path: Path, uv_path: Path):
-    workpath = "".join(random.choice(string.ascii_letters) for x in range(10))
-
-    wrapper_code = f"""\
-import subprocess, sys
-
-if len(sys.argv) > 1: 
-    subprocess.Popen(
-        [r"{uv_path}", "run", "--script", sys.argv[1], *sys.argv[2:]],
-        creationflags=subprocess.CREATE_NO_WINDOW,
-    )
-"""
-    tmp_py = wrapper_path.with_suffix(".py")
-    tmp_py.write_text(wrapper_code, encoding="utf-8")
-    log.info(f"Wrapper source written to {tmp_py}")
-
-    # Build exe with pyinstaller
-    subprocess.run(
-        [
-            "pyinstaller",
-            "--onefile",
-            "--noconsole",
-            "--workpath", workpath,
-            "--distpath", str(wrapper_path.parent),
-            str(tmp_py),
-        ],
-        check=True,
-    )  # fmt: skip
-
-    # Cleanup pyinstaller leftovers
-    for item in [workpath, tmp_py.stem + ".spec"]:
-        p = Path(item)
-        if p.exists():
-            if p.is_dir():
-                shutil.rmtree(p)
-            else:
-                p.unlink()
-
-    tmp_py.unlink(missing_ok=True)
-    log.info(f"Wrapper built: {wrapper_path}")
 
 
 def add_assoc(
@@ -205,11 +138,14 @@ def del_assoc(ext: str, progid: str):
     log.info(f"{progid} key removed.")
 
 
-def main():
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Associate files with uv run --script (.uv) and uw wrapper (.uw)"
+        description="Associate files with uv run --script (.uv, .uvw)"
     )
-    default_uv = Path.home() / ".local" / "bin" / "uv.exe"
+
+    default = Path.home() / ".local" / "bin"
+    default_uv = default / "uv.exe"
+    default_uvw = default / "uvw.exe"
 
     # fmt: off
     parser.add_argument(
@@ -221,21 +157,18 @@ def main():
         help=f"Path to uv.exe (default: {default_uv})",
     )
     parser.add_argument(
+        "--uvw-path", type=Path, default=default_uvw,
+        help=f"Path to uvw.exe (default: {default_uvw})",
+    )    
+    parser.add_argument(
         "--icon-path", type=Path, default=Path(r"C:\Windows\py.exe"),
         help="Path to icon file",
     )
     # fmt: on
 
     args = parser.parse_args()
-    if not args.action:
-        parser.print_help()
-        sys.exit(0)
-
-    local_bin = ensure_local_bin()
-    wrapper_exe = local_bin / "uw.exe"
 
     if args.action == "add":
-        # Normal .uv association
         add_assoc(
             "uv",
             args.uv_path,
@@ -245,46 +178,21 @@ def main():
             'run --script "%1" %*',
         )
 
-        # Silent .uw association
-        if not wrapper_exe.exists():
-            build_wrapper(wrapper_exe, args.uv_path)
         add_assoc(
-            "uw",
-            wrapper_exe,
+            "uvw",
+            args.uvw_path,
             args.icon_path,
             "UvWScript",
-            "UV Python Script (Windowless)",
-            '"%1" %*',
+            "UVW Python Script (Windowless)",
+            'run --script "%1" %*',
         )
 
     elif args.action == "del":
         del_assoc("uv", "UvScript")
-        del_assoc("uw", "UvWScript")
-        if wrapper_exe.exists():
-            wrapper_exe.unlink()
-            log.info(f"Removed wrapper exe: {wrapper_exe}")
+        del_assoc("uvw", "UvWScript")
+
+    else:
+        parser.print_help()
+        sys.exit(0)
 
     refresh_icons()
-
-
-if __name__ == "__main__":
-
-    def is_pyinstaller_available():
-        if shutil.which("pyinstaller") is None:
-            return False
-
-        try:
-            r = subprocess.run(
-                ["pyinstaller", "--version"], capture_output=True, text=True, check=True
-            )
-
-            # 6.16.0 => 6160 => digit
-            return r.stdout.lower().replace(".", "").strip().isdigit()
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            return False
-
-    if not is_pyinstaller_available():
-        log.error("pyinstaller not found, make sure you run uvass via uv")
-        sys.exit(1)
-
-    main()
