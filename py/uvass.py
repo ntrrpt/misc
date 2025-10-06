@@ -236,7 +236,9 @@ if __name__ == "__main__":
     local_bin = Path.home() / ".local" / "bin"
     def_uv = local_bin / "uv.exe"
     def_uvw = local_bin / "uvw.exe"
+    def_uvc = local_bin / "uvc.exe"  # c => custom
     def_py = Path(r"C:\Windows\py.exe")
+    
 
     # fmt: off
     parser.add_argument(
@@ -262,9 +264,9 @@ if __name__ == "__main__":
     # fmt: on
 
     args = parser.parse_args()
-    wrapper_exe = local_bin / "uvc.exe"  # c => custom
 
-    if args.wrapper and not wrapper_exe.exists() and not is_pyinstaller_available():
+
+    if args.wrapper and not def_uvc.exists() and not is_pyinstaller_available():
         log.error("pyinstaller not found, make sure you run uvass via uv")
         sys.exit(1)
 
@@ -291,12 +293,12 @@ if __name__ == "__main__":
             else:
                 ensure_local_bin()
 
-                if not wrapper_exe.exists():
-                    build_wrapper(wrapper_exe, args.uv_path)
+                if not def_uvc.exists():
+                    build_wrapper(def_uvc, args.uv_path)
 
                 add_assoc(
                     "uvw",
-                    wrapper_exe,
+                    def_uvc,
                     args.icon_path,
                     "UvWScript",
                     "UVW Python Script (Windowless)",
@@ -307,9 +309,9 @@ if __name__ == "__main__":
             del_assoc("uv", "UvScript")
             del_assoc("uvw", "UvWScript")
 
-            if wrapper_exe.exists():
-                wrapper_exe.unlink()
-                log.info(f"Removed wrapper exe: {wrapper_exe}")
+            if def_uvc.exists():
+                def_uvc.unlink()
+                log.info(f"Removed wrapper exe: {def_uvc}")
 
         case _:
             parser.print_help()
