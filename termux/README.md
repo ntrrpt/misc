@@ -1,5 +1,5 @@
 ```bash
-pkg in ffmpeg uv tmux frp zsh byobu wget git fzf
+pkg in ffmpeg uv tmux frp zsh byobu wget git fzf rust
 
 # ohmyzsh + plugins
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -22,5 +22,6 @@ done
 
 
 ```
+
 
 
