@@ -1,15 +1,20 @@
 ```bash
-pkg in ffmpeg uv tmux frp zsh byobu wget git fzf rust
+pkg in ffmpeg uv tmux frp zsh byobu wget git fzf rust vim micro croc
 
-# ohmyzsh + plugins
+# omz
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
+# omz plugins
 git clone https://github.com/z-shell/F-Sy-H.git \
    ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/F-Sy-H
 git clone https://github.com/zsh-users/zsh-autosuggestions \
    ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 
-# uv
+# vim
+git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime && \
+   sh ~/.vim_runtime/install_awesome_vimrc.sh
+
+# uv                             \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/ useless in termux
 uv tool install "copyparty[all]" --with "fusepy,pyvips[binary]"
 
 uv tool install https://github.com/yt-dlp/yt-dlp.git -w 'pycryptodomex,pysocks,mutagen,requests,websockets,brotli,certifi,bgutil-ytdlp-pot-provider'
@@ -22,6 +27,7 @@ done
 
 
 ```
+
 
 
 
