@@ -14,8 +14,11 @@ git clone https://github.com/zsh-users/zsh-autosuggestions \
 git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime && \
    sh ~/.vim_runtime/install_awesome_vimrc.sh
 
-# uv                             \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/ useless in termux
+# cpp normal
 uv tool install "copyparty[all]" --with "fusepy,pyvips[binary]"
+
+# cpp termux
+uv tool install copyparty --with "pyftpdlib,pillow,mutagen"
 
 uv tool install https://github.com/yt-dlp/yt-dlp.git -w 'pycryptodomex,pysocks,mutagen,requests,websockets,brotli,certifi,bgutil-ytdlp-pot-provider'
 
@@ -27,6 +30,7 @@ done
 
 
 ```
+
 
 
 
