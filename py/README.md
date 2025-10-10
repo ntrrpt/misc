@@ -9,7 +9,7 @@
 | knock.py                                                           | port knocker for windows                                                                     |
 | pefa4.py                                                           | tail -f abaqus .sta                                                                          |
 | twd.py                                                             | twitter search scrapper (rip my 9yo account)                                                 |
-| [sync.py](https://github.com/ntrrpt/misc/blob/main/termux/sync.py) | rsync wrapper with folder exclusion support                                                  |
+| sync.py                                                            | rsync wrapper with folder exclusion support                                                  |
 | flcl.py                                                            | recursive fclones                                                                            |
 | uvass.py                                                           | associate files with uv run --script (.uv, .uvw) on windows                                  |
 

@@ -1,0 +1,13 @@
+["/sdcard/Movies"]
+["/sdcard/Music"]
+["/sdcard/Kuroba"]
+
+["/sdcard/Download"] 
+exclude = ["KateDownloads/"]
+
+["/sdcard/Pictures"] 
+exclude = ["KatePhotos/"]
+
+["/sdcard/DCIM"] 
+exclude = ["DCIM_24/"]
+remove = false
