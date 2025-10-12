@@ -49,6 +49,10 @@ if __name__ == "__main__":
     log.info(f"start sync to {DEST!r}")
 
     for dir_path, options in config.items():
+        if not os.path.isdir(dir_path):
+            log.error(f"{dir_path!r} is not exists")
+            continue
+
         excludes = options.get("exclude", [])
         remove = options.get("remove", True)
 
