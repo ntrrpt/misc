@@ -1,7 +1,7 @@
 ```bash
 # termux packages
 pkg up && pkg in openssh
-pkg in ffmpeg uv tmux frp zsh byobu wget git fzf rust vim micro croc eza gdu
+pkg in ffmpeg uv tmux frp zsh byobu wget git fzf rust vim micro croc eza gdu mosh nmap rsync
 
 # omz
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -36,6 +36,8 @@ for pkg in streamlink scdl internetarchive; do
     uv tool install "$pkg"
 done
 ```
+
+
 
 
 
