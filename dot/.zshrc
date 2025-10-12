@@ -39,13 +39,14 @@ alias grep='grep --color=auto'
 alias myip='curl http://ipecho.net/plain; echo'
 alias pro='proxychains'
 alias gal="gallery-dl -c ~/.gal.conf"
+alias fp="ping 8.8.8.8"
 #alias abaqus='LANG=en_US.utf8 /var/DassaultSystemes/SIMULIA/Commands/abaqus'
 #export PATH="/var/DassaultSystemes/SIMULIA/Commands:$PATH"
 
 # termux
 alias a='tmux attach -t main || tmux new -s main'
 alias cop="copyparty -c ~/cpp/cpp.conf"
-alias fp="frpc -c ~/frpc.toml"
+alias frp="frpc -c ~/frpc.toml"
 alias av='sudo avahi-daemon'
 
 # eza
@@ -90,18 +91,6 @@ mcd () {
     mkdir -p $1
     cd $1
 }
-
-# port knocker knocking
-# https://raw.githubusercontent.com/ntrrpt/misc/refs/heads/main/py/knock.py
-knock() { nping --udp --count 1 --data-length 1 --dest-port $1 $PASTE_IP_HERE }
-sq()
-{
-    for num in 1, 2, 3, 4, 5, 6, 7, 8, 9, 0; do
-        knock $num
-    done
-}
-sqq () {while true; do sq; sleep 10; done}
-
 
 ### Set/unset ZSH options
 #########################

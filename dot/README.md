@@ -10,6 +10,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 mkdir ~/cpp && \
    wget -O ~/.tmux.conf https://github.com/ntrrpt/misc/raw/refs/heads/main/dot/.tmux.conf && \
    wget -O ~/.zshrc https://github.com/ntrrpt/misc/raw/refs/heads/main/dot/.zshrc && \
+   wget -O ~/.privrc https://github.com/ntrrpt/misc/raw/refs/heads/main/dot/.privrc && \
    wget -O ~/cpp/cpp.conf https://github.com/ntrrpt/misc/raw/refs/heads/main/dot/cpp/cpp.conf
 
 # omz plugins
