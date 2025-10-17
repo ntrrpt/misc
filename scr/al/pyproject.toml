@@ -1,0 +1,18 @@
+[project]
+name = "al"
+version = "1.0"
+description = "opi garbage alarm clock"
+authors = [{ name = "nt" }]
+readme = "README.md"
+requires-python = "==3.13.*"
+
+dependencies = [
+    "schedule>=1.2.2",
+    "loguru>=0.7.2",
+    "adafruit-circuitpython-ssd1306>=2.12.18",
+    "gpiod>=2.2.2",
+    "pillow>=11.0.0",
+    "uvicorn>=0.37.0",
+    "fastapi>=0.119.0",
+    "tomli-w>=1.2.0",
+]
