@@ -14,6 +14,7 @@ import tomli_w
 import tomllib
 import uvicorn
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import PlainTextResponse
 from loguru import logger as log
 
 app = FastAPI()
@@ -216,7 +217,7 @@ def oled_update(blank: bool = False):
     DISP.show()
 
 
-@app.get("/kill")
+@app.get("/kill", response_class=PlainTextResponse)
 def kill():
     import signal
 
@@ -227,7 +228,7 @@ def kill():
     return "rip"
 
 
-@app.get("/reboot")
+@app.get("/reboot", response_class=PlainTextResponse)
 def reboot():
     stop()
     at_set((-1, -1))
@@ -235,7 +236,7 @@ def reboot():
     return "reboot ok"
 
 
-@app.get("/poweroff")
+@app.get("/poweroff", response_class=PlainTextResponse)
 def poweroff():
     stop()
     at_set((-1, -1))
@@ -244,7 +245,7 @@ def poweroff():
 
 
 # playing sound
-@app.get("/play")
+@app.get("/play", response_class=PlainTextResponse)
 def play():
     global RING, OLED_SEC, TS_NOW
     if RING:
@@ -272,7 +273,7 @@ def play():
 
 
 # stopping sound
-@app.get("/stop")
+@app.get("/stop", response_class=PlainTextResponse)
 def stop():
     global RING
 
@@ -293,7 +294,7 @@ def stop():
 
 
 # stopping sound with delaying alarm time
-@app.get("/snooze")
+@app.get("/snooze", response_class=PlainTextResponse)
 def snooze():
     global RING, OLED_SLEEP, OLED_SEC
 
@@ -332,7 +333,7 @@ def snooze():
 
 
 # setting time
-@app.post("/set")
+@app.post("/set", response_class=PlainTextResponse)
 async def _set(request: Request):
     global RING, RING_TIME, OLED_SLEEP, OLED_SEC
 
