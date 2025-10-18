@@ -582,7 +582,7 @@ if __name__ == "__main__":
             schedule.run_pending()
 
             btn = gpio_chk(args.pin_button)
-            sec = time.time()
+            sec = int(time.time())
 
             # showing small clock on button press
             if btn:
