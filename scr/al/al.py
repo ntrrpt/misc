@@ -106,7 +106,7 @@ def sp_exec(cmd: str | list):
 
 
 def gpio_chk(pin: str):
-    if pin < 0:
+    if int(pin) < 0:
         return False
 
     s, _ = sp_exec(f"gpio read {pin}")
@@ -114,7 +114,7 @@ def gpio_chk(pin: str):
 
 
 def gpio_set(pin: int, state: int):
-    if pin > 0:
+    if int(pin) > 0:
         sp_exec(f"gpio write {pin} {state}")
 
 
@@ -264,7 +264,7 @@ def play():
     OLED_SEC = -1
 
     # playing mp3
-    c = ["mpg123", "-Z"] + args.path  # '--loop', '-1'
+    c = ["mpg123", "-Z"] + args.mp3_path  # '--loop', '-1'
     RING = sp.Popen(c, stdout=sp.DEVNULL, stderr=sp.DEVNULL)
     log.trace(f"play cmd: {c}")
 
@@ -399,9 +399,9 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     add = ap.add_argument
 
-    add('-v', '--verbose', action='store_true',                      help='verbose output (traces)')
-    add("-c", "--config",  type=Path, default=Path('config.toml'),   help="path to config.toml")
-    add("-p", "--path",    type=Path, default=Path('ponponpon.mp3'), help="path to .mp3 file / folder with .mp3's")
+    add('-v', '--verbose',  action='store_true',               help='verbose output (traces)')
+    add("-c", "--config",   type=str, default='config.toml',   help="path to config.toml")
+    add("-m", "--mp3-path", type=str, default='ponponpon.mp3', help="path to .mp3 file / folder with .mp3's")
 
     g = ap.add_argument_group('alarm options')
     add = g.add_argument
@@ -416,13 +416,13 @@ if __name__ == "__main__":
     g = ap.add_argument_group('oled options')
     add = g.add_argument
 
-    def_ttf = Path('TerminusTTF-4.49.3.ttf')
-    def_ttfb = Path('TerminusTTF-Bold-4.49.3.ttf')
-    add("--disable-oled", action='store_true',         help="disable oled support")
-    add("--oled-clock",   type=int, default=10,        help="big clock after X minutes")
-    add("--oled-sleep",   type=int, default=60,        help="blank oled after X minutes") 
-    add("--ttf",          type=Path, default=def_ttf,  help="main font for oled")
-    add("--ttf-bold",     type=Path, default=def_ttfb, help="bold font for oled")
+    def_ttf = 'TerminusTTF-4.49.3.ttf'
+    def_ttfb = 'TerminusTTF-Bold-4.49.3.ttf'
+    add("--disable-oled", action='store_true',        help="disable oled support")
+    add("--oled-clock",   type=int, default=10,       help="big clock after X minutes")
+    add("--oled-sleep",   type=int, default=60,       help="blank oled after X minutes") 
+    add("--ttf",          type=str, default=def_ttf,  help="main font for oled")
+    add("--ttf-bold",     type=str, default=def_ttfb, help="bold font for oled")
 
     g = ap.add_argument_group('pin options')
     add = g.add_argument
@@ -439,9 +439,6 @@ if __name__ == "__main__":
     args = ap.parse_args()
     # fmt: on
 
-    for p in [args.path, args.config, args.ttf, args.ttf_bold]:
-        p = Path(p)
-
     log.add("log.txt")
     if args.verbose:
         from sys import stderr
@@ -451,76 +448,81 @@ if __name__ == "__main__":
         log.add("log.txt", level="TRACE", encoding="utf-8")
 
     # number envs
-    for var, target in [
+    for var, attr in [
         # main
-        ("AL_CONFIG", args.config),
-        ("AL_PATH", args.path),
+        ("AL_CONFIG", "config"),
+        ("AL_MP3_PATH", "mp3_path"),
 
         # alarm
-        ("AL_ALARM_TIME", args.alarm_time),
-        ("AL_SNOOZE_TIME", args.snooze_time),
-        ("AL_SNOOZE_MAX", args.snooze_max),
-        ("AL_RESET_TIME", args.reset_time),
-        ("AL_START_VOLUME", args.start_volume),
-        ("AL_VOLUME_RAISE", args.volume_raise),
+        ("AL_ALARM_TIME", "alarm_time"),
+        ("AL_SNOOZE_TIME", "snooze_time"),
+        ("AL_SNOOZE_MAX", "snooze_max"),
+        ("AL_RESET_TIME", "reset_time"),
+        ("AL_START_VOLUME", "start_volume"),
+        ("AL_VOLUME_RAISE", "volume_raise"),
 
         # oled
-        ("AL_OLED_CLOCK", args.oled_clock),
-        ("AL_OLED_SLEEP", args.oled_sleep),
-        ("AL_TTF", args.ttf),
-        ("AL_TTF_BOLD", args.ttf_bold),
+        ("AL_OLED_CLOCK", "oled_clock"),
+        ("AL_OLED_SLEEP", "oled_sleep"),
+        ("AL_TTF", "ttf"),
+        ("AL_TTF_BOLD", "ttf_bold"),
 
         # pin
-        ("AL_PIN_BUTTON", args.pin_button),
-        ("AL_PIN_RELAY", args.pin_relay),
+        ("AL_PIN_BUTTON", "pin_button"),
+        ("AL_PIN_RELAY", "pin_relay"),
 
         # server
-        ("AL_PORT", args.port),
-        ("AL_HOST", args.host),
+        ("AL_PORT", "port"),
+        ("AL_HOST", "host"),
     ]:  # fmt: skip
         env = os.environ.get(var, "")
-        if env:
-            target = env
 
-        log.trace(f"{var}: {target}")
+        if env:
+            setattr(args, attr, env)
+
+        log.trace(f"{var}: {getattr(args, attr)}")
 
     # bool envs
-    for var, target in [
+    for var, attr in [
         # oled
-        ("AL_DISABLE_OLED", args.disable_oled),
+        ("AL_DISABLE_OLED", "disable_oled"),
     ]:
         env = os.environ.get(var, "")
         if env in ["True", "1"]:
-            target = True
+            setattr(args, attr, True)
         elif env in ["False", "0"]:
-            target = False
+            setattr(args, attr, False)
 
-        log.trace(f"{var}: {target}")
+        log.trace(f"{var}: {attr}")
+
+    for attr in ["mp3_path", "config", "ttf", "ttf_bold"]:
+        path = Path(getattr(args, attr))
+        setattr(args, attr, path)
 
     ##########################
     ## mp3's parsing
 
-    if args.path.is_file():
-        if args.path.suffix != ".mp3":
-            log.critical(f"invalid .mp3: {args.path.resolve().as_posix()} ")
+    if args.mp3_path.is_file():
+        if args.mp3_path.suffix != ".mp3":
+            log.critical(f"invalid .mp3: {args.mp3_path.resolve().as_posix()} ")
             die(1)
 
-        args.path = [Path(args.path).resolve().as_posix()]
+        args.mp3_path = [Path(args.mp3_path).resolve().as_posix()]
 
-    elif args.path.is_dir():
-        mp3s = [str(f.resolve()) for f in args.path.rglob("*.mp3") if f.is_file()]
+    elif args.mp3_path.is_dir():
+        mp3s = [str(f.resolve()) for f in args.mp3_path.rglob("*.mp3") if f.is_file()]
         if not mp3s:
             log.critical(
-                f"{args.path.resolve().as_posix()!r} doesn't contain .mp3 files"
+                f"{args.mp3_path.resolve().as_posix()!r} doesn't contain .mp3 files"
             )
             die(1)
 
-        args.path = mp3s
+        args.mp3_path = mp3s
     else:
-        log.critical(f"invalid path: {args.path.resolve().as_posix()}")
+        log.critical(f"invalid path: {args.mp3_path.resolve().as_posix()}")
         die(1)
 
-    log.info(f"mp3's: {args.path}")
+    log.trace(f"mp3's: {args.mp3_path}")
 
     ##########################
     ## alarm time parsing
