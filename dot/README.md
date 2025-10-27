@@ -24,10 +24,10 @@ git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime && \
    sh ~/.vim_runtime/install_awesome_vimrc.sh
 
 # cpp normal
-uv tool install "copyparty[all]=1.19.17" --with "fusepy,pyvips[binary]"
+uv tool install "copyparty[all]==1.19.17" --with "fusepy,pyvips[binary]"
 
 # cpp termux
-uv tool install "copyparty=1.19.17" --with "pyftpdlib,pillow,mutagen"
+uv tool install "copyparty==1.19.17" --with "pyftpdlib,pillow,mutagen"
 
 # other
 uv tool install https://github.com/yt-dlp/yt-dlp.git -w 'pycryptodomex,pysocks,mutagen,requests,websockets,brotli,certifi,bgutil-ytdlp-pot-provider'
@@ -36,6 +36,7 @@ for pkg in streamlink scdl internetarchive; do
     uv tool install "$pkg"
 done
 ```
+
 
 
 
