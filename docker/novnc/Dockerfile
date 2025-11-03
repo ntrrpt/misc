@@ -9,30 +9,8 @@ RUN apk add --no-cache --progress git bash
 RUN uv tool install websockify
 
 RUN git clone https://github.com/novnc/noVNC.git /usr/src/app/noVNC
-RUN cat > /usr/src/app/noVNC/index.html <<'EOF'
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>nouvnc</title>
-    <style>
-      html,
-      body,
-      iframe {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        width: 100%;
-        border: 0;
-        overflow: hidden;
-      }
-    </style>
-  </head>
-  <body>
-    <iframe src="vnc.html?autoconnect=true&resize=remote"></iframe>
-  </body>
-</html>
-EOF
 WORKDIR /usr/src/app/noVNC
+COPY index.html .
 
 ENTRYPOINT [ "bash", "./utils/novnc_proxy" ]
 # docker build -t nouvnc .\
