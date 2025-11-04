@@ -6,7 +6,13 @@ cmd = "fclones group . | fclones remove"
 
 
 def has_subfolders(directory: Path) -> bool:
-    return any((directory / item).is_dir() for item in directory.iterdir())
+    directory = Path(directory)
+    if not directory.exists() or not directory.is_dir():
+        return False
+    try:
+        return any(item.is_dir() for item in directory.iterdir())
+    except PermissionError:
+        return False
 
 
 def run_fclones(path: Path) -> None:
